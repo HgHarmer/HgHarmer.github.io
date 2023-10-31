@@ -1,0 +1,20 @@
+---
+title: "index"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# my website
+
+## [HOME](https://hgharmer.github.io) 
+
+
+
+
+```{r echo=FALSE}
+knitr::include_graphics('./Media/Screenshot 2023-10-17 095021.png')
+```
+
