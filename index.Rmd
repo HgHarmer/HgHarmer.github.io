@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # my website
 
-## [HOME](https://hgharmer.github.io) 
+## [HOME](https://hgharmer.github.io/index.html) 
 
 
 
