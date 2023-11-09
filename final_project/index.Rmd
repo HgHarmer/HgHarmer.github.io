@@ -22,5 +22,5 @@ div.blue { background-color:#a89d82; border-radius: 5px; padding: 20px;}
 </style>
 <div class = "blue">
 
-[password Input](https://hgharmer.github.io/final_project/password/index.html)
+[password Input](https://hgharmer.github.io/final_project/Password/index.html)
 </div>
