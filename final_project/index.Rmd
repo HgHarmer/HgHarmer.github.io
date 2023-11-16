@@ -23,8 +23,13 @@ div.blue { background-color:#a89d82; border-radius: 5px; padding: 20px;}
 </style>
 <div class = "blue">
 
-```{r echo=FALSE}
-knitr::include_app('https://hgharmer.shinyapps.io/nhapp/',height = 1000)
+
+
+```{r echo=FALSE, fig.width=9}
+
+include_url("https://hgharmer.shinyapps.io/nhapp/",
+            height = '1000')
+
 ```
 
 
