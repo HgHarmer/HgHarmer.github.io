@@ -24,7 +24,7 @@ div.blue { background-color:#a89d82; border-radius: 5px; padding: 20px;}
 <div class = "blue">
 
 ```{r echo=FALSE}
-knitr::include_app('http://hgharmer.shinyapps.io/nhapp/',height = 1000)
+knitr::include_app('https://hgharmer.shinyapps.io/nhapp/',height = 1000)
 ```
 
 
