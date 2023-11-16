@@ -4,6 +4,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
 ```
 
 ## [HOME](https://hgharmer.github.io/index.html) | [ABOUT ME](https://hgharmer.github.io/about-me/index.html) | [FINAL PROJECT](https://hgharmer.github.io/final_project/index.html)
@@ -14,7 +15,7 @@ div.gray { background-color:#008080; border-radius: 5px; padding: 20px;}
 <div class = "gray">
 
 # **Final Project** 
-___
+
 </div>
 
 <style>
@@ -22,5 +23,10 @@ div.blue { background-color:#a89d82; border-radius: 5px; padding: 20px;}
 </style>
 <div class = "blue">
 
-[password Input](https://hgharmer.github.io/final_project/Password/index.html)
+```{r echo=FALSE}
+include_app('http://hgharmer.shinyapps.io/nhapp/',height = 1000)
+```
+
+
+
 </div>
