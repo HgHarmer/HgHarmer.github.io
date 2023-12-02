@@ -5,7 +5,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-## [HOME](https://hgharmer.github.io/index.html) | [ABOUT ME](https://hgharmer.github.io/about-me/index.html) | [FINAL PROJECT](https://hgharmer.github.io/final_project/index.html)
+## [HOME](https://hgharmer.github.io/index.html) | [ABOUT ME](https://hgharmer.github.io/about-me/index.html) | [FINAL PROJECT](https://hgharmer.github.io/final_project/index.html) | [FUNGAL DATA](https://hgharmer.github.io/Fungal_proj/index.html)
 ___
 <style>
 div.gray { background-color:#008080; border-radius: 5px; padding: 20px;}
