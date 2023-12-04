@@ -1,0 +1,201 @@
+---
+output: 
+  html_document:
+    code_folding: hide
+    df_print: paged
+    highlight: zenburn
+    
+---
+
+<style>
+.table-hover > tbody > tr:hover { 
+  background-color: #0080ff;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+library(tidyverse)
+library(janitor)
+library(broom)
+library(knitr)
+library(kableExtra)
+library(plotly)
+library(modelr)
+library(SciViews)
+```
+
+
+# <span style="color:black"> Toxicity of Hydroquinone Report </span> {.tabset}
+
+
+
+## <span style="color:black"> Introduction </span> 
+ 
+
+A common ingredient in skin lightening  creams is Hydroquinone, this chemical is a well-known inhibitor of tyrosinase which leads to a reduced melanin production in melanocytes. However, hydroquinone is also known to be selectively toxic to melanocytes though the exact TD50 of this chemical on melanocytes has not been reported. The goal of this experiment will be to determine the TD50 of hydroquinone on melanocytes.
+
+To do this an MTT assay will be preformed on the cells. In this MTT assay B16F10 mouse melanoma cells will be plated in a 96 well plate and exposed to a spectrum of concentrations of hydroquinone ranging from 200uM to just 1.5625uM, additional B16F10 cells will be plated at concentrations of 10,000 cells/well down to 500 cells/well with no hydroquinone as a way to determine the final cell counts of the treated cells. Once the cells have been allowed to incubate for 24 hours the media all the cells are in will be replaced by media containing MTT. The cells will then reduce the yellow MTT into the purple formazan which will crystalize at the bottom of the wells. In order to solubilize the crystals the media will be replaced with DMSO and the OD540nm will be measured.
+
+
+## <span style="color:black"> Materials </span> 
+
+```{r}
+Material <- c('B16F10 cells','96 well plate' ,'DMEM' ,'hydroquinone' ,'sterile filter' ,'MTT' ,'DMSO')
+
+Amount <- c('1 confluent 10cm plate','1', '100 ml',  '>110mg', '1', '2ml', '2ml')
+mat <- data.frame(Material,Amount)
+
+kable(mat,format = 'html') %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+
+## <span style="color:black"> Methods </span> 
+
+To perform the MTT assay the plate 10cm of B16F10 cells were trypsinized using standard cell culture procedure. The cells were then counted on a hemocytometer to determine the density of the cells. Once the cells were counted enough DMEM was added dilute the cells to a concentration of 100,000 cells/ ml. 100ul of the cell solution was then added to all wells in columns 4- 6 so that each well had 10,000 cells. Columns 1-3 received a gradient of cells. Rows A, B, C, D, E, F, G, and H received 10,000, 9,000, 8,000, 6,000, 4,000, 2,000, 1,000, and 500 cells respectively. Media was then added to increase the final volume of all wells to 100ul. 
+	
+	
+After the cells were aliquoted, they were allowed to incubate for 18 hours at 37c and 10% C02. While the cells incubated a 20mM solution of hydroquinone in DMEM was prepared. To do this 110mg of hydroquinone was dissolved into 10 ml of DMEM, this solution was then added to 40ml of DMEM using a sterile filter. After incubating 2ul of the hydroquinone/DMEM solution and 98ul of DMEM were added to wells A4-A6 to create a 200uM solution. 100ul of the media from wells A 3-6 was then transferred to wells  B 3-6 this was repeated for all rows until row H, after the media had been added to H the final 100ul from those columns were discarded. This created a gradient from 200uM hydroquinone in row A to 1.5625uM in row H. The cells were then allowed to incubate for another 24 hours.
+	
+
+Once incubated the media was removed from all wells and replaced with 100ul of  0.5mg/ml MTT in DMEM, and the cells were allowed to incubate for 4 hours in order to allow formazan crystals to form, the media was then carefully aspirated being sure not to disturb the crystals and 50 ul of DMSO was added to each well to solubilize the formazan. The plate was then allowed to sit for 5 minutes to ensure full solubilization. The OD540 of the wells was then measured and recorded.
+
+
+## <span style="color:black"> Results </span> 
+
+Using a logarithmic model with the equation 'Cell Count=-4578.544*ln(concentration)+39482.942' it was found that the TD50 of hydroquinone on B16F10 cells was 117.037uM. The p value of the model used was 0.0012462, indicating that at alpha= 0.01 this model is a reasonable predictor of the B16F10 cell count in the presence of a given concentration of hydroquinone.  
+
+
+```{r message=FALSE, warning=FALSE}
+row<-rep(c('a','b','c','d','e','f','g','h'),6)
+column <- c(rep(1,8),
+            rep(2,8),
+            rep(3,8),
+            rep(4,8),
+            rep(5,8),
+            rep(6,8))
+cells_plated<-c(rep(c(10000, 9000, 8000, 6000,4000, 2000, 1000, 500),3), 
+                rep(10000,24))
+
+abs_540 <- c(1.152,0.916,0.758,0.342,0.325,0.196,0.173,0.131,
+             1.121,0.762,0.789,0.381,0.479,0.280,0.158,0.117,
+             1.174,0.802,0.344,0.705,0.510,0.321,0.186,0.115,
+             0.563,0.552,0.749,1.006,1.078,1.241,0.879,0.919,
+             0.438,0.585,0.371,0.546,0.586,0.963,0.748,0.913,
+             0.326,0.438,0.514,0.702,0.746,0.340,0.915,0.542)
+  
+	
+
+
+concentration <- c(rep(NA,24))
+c <- 400
+for (i in 1:8) {
+  c <- c/2
+  concentration <- c(concentration,c)
+}
+concentration <- c(concentration,concentration[25:32])
+concentration <- c(concentration,concentration[25:32])
+ 
+dat<-data.frame(row,column,cells_plated,abs_540,concentration) %>% 
+  mutate(Treatment=case_when(column==1~'control',
+                             column==2~'control',
+                             column==3~'control',
+                             column==4~'hydroquinone',
+                             column==5~'hydroquinone',
+                             column==6~'hydroquinone'))%>% 
+  mutate(cells_attached=cells_plated/2) %>% 
+  mutate(final_cells=case_when(Treatment=='control'~cells_attached*2.66667^2))
+##########################################################################
+dat_2 <- dat %>%
+  filter(Treatment=='control') %>% 
+  group_by(final_cells) %>% 
+  summarise(abs_540=mean(abs_540))
+
+mod1 <- lm(data = dat_2,final_cells~abs_540)
+mod <- mod1 %>% tidy()
+
+
+p <- dat_2 %>%
+  ggplot(aes(y=final_cells,x=abs_540))+
+  geom_point()+
+  geom_smooth(method = 'lm',se=FALSE)+
+  labs(title ='Standard for B16F10 cells',y='Cells',x='OD540nm' )+
+annotate('text',y=40000,x=0.3,
+         label='y= 36181.2x-447.8
+           r^2=0.9101')
+
+ggplotly(p)
+  
+
+
+kable(mod,format = 'html') %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+Figure 1: the model for this plot tells us that cells= 36181.2(OD540)-447.8 which will be used to determine how many cells were present in the wells that were treated with hydroquinone.
+
+```{r message=FALSE, warning=FALSE}
+
+dat_3 <- dat %>%
+  filter(Treatment=='hydroquinone') %>% 
+  group_by(concentration) %>% 
+  summarise(abs_540=mean(abs_540))
+
+preds <- add_predictions(dat_3,model = mod1)
+
+c_preds<- preds %>% 
+  filter(concentration>5)
+
+
+non_lin <- glm(data=c_preds,
+    pred~I(ln(concentration)))
+
+
+
+
+r2 <- 1 - non_lin$deviance/non_lin$null.deviance
+ 
+concentration <- c(7:250)
+test <- data.frame(
+  concentration)
+
+test2 <- add_predictions(test,model = non_lin)
+
+
+p2 <- c_preds %>% 
+  ggplot(aes(x=concentration,y=pred))+ 
+  geom_point()+
+  geom_line(data=test2,aes(x=concentration,y=pred))+
+  labs(x='Concentration of hydroquinone (uM)',
+       y='Number of cells',
+       title = 'Toxicity Of hydroquinone')
+ggplotly(p2)
+
+non_lin2 <- non_lin %>% tidy()
+kable(non_lin2,format = 'html') %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+figure 2: The model for this plot tells us that Cell Count=-4578.544*ln(concentration)+39482.942 from this we can derive that concentration=e^(-0.000218(Cell Count)+8.645) which was used to determine the TD50 of hydroquinone on B16F10 cells. For this plot only concentration of hydroquinone >6uM were used as concntrations lower than that did non seem to impact cell growth.  
+
+___
+
+### All data collected
+
+```{r}
+kable(dat,format = 'html') %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+table 1: this table shows all data recorded over the course of the experiment.
+
+
+## <span style="color:black"> Discussion </span> 
+
+In this experiment it was determined that the TD50 of hydroquinone on B16F10 was 117.037uM. This TD50 may be important information to know when it comes to using hydroquinone based skin lightening creams. however before this data can be directly applied to skin lightening creams it would first need to be better understood what percent of the hydroquinone reaches the melanocytes under the epidermis.
+
+Additionaly, it is important to note that the cells being used are mouse melanoma cells, future experiments may be needed to find the TD50 of hydroquinone on healthy human melanocytes as it may differ from the results obtained using B16F10 cells.
+
+
+
+
