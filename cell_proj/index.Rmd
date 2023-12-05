@@ -123,7 +123,8 @@ p <- dat_2 %>%
   labs(title ='Standard for B16F10 cells',y='Cells',x='OD540nm' )+
 annotate('text',y=40000,x=0.3,
          label='y= 36181.2x-447.8
-           r^2=0.9101')
+           r^2=0.9101')+
+  theme_minimal()
 
 ggplotly(p)
   
@@ -169,7 +170,9 @@ p2 <- c_preds %>%
   geom_line(data=test2,aes(x=concentration,y=pred))+
   labs(x='Concentration of hydroquinone (uM)',
        y='Number of cells',
-       title = 'Toxicity Of hydroquinone')
+       title = 'Toxicity Of hydroquinone')+
+  theme_minimal()
+
 ggplotly(p2)
 
 non_lin2 <- non_lin %>% tidy()
